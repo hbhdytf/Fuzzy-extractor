@@ -14,7 +14,7 @@
 
 #include "pinsketch.h"
 
-int main(int argc, char** argv)
+int differ(int argc, char** argv)
 {
 	int len1, len2; // lengths of argv[1], argv[2], if they exist
 
@@ -47,9 +47,10 @@ int main(int argc, char** argv)
 		
 	bool mode; // 0 if comparing .ss with .ss; 1 if comparing .ss with .set
 	mode = (strcmp (&argv[2][len2-4], ".set")==0);
-
+    const char *differ="differ.set";
 	ifstream infile1(argv[1]);
 	ifstream infile2(argv[2]);
+	ofstream outfile(differ);
         if (!infile1 || !infile2) {
            cerr << "Could not open files!" << endl;
            if (infile1) infile1.close();
@@ -121,7 +122,14 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	OutputSetDifference(cout, setDifference);
+	OutputSetDifference(outfile, setDifference);
 
 	return 0;
 }
+
+int main(int argc,char **argv)
+{
+    differ(argc,argv);
+    return 0;
+}
+

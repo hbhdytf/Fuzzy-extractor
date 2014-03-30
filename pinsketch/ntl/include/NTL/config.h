@@ -354,7 +354,7 @@ using the configure script.
  * 
  */
 
-#if 0
+#if 1
 #define NTL_LONG_LONG
 
 /*
@@ -375,7 +375,7 @@ using the configure script.
  *   To re-build after changing this flag:  rm lip.o; make ntl.a
  */
 
-#elif 1
+#elif 0
 #define NTL_AVOID_FLOAT
 
 /*
@@ -428,7 +428,7 @@ using the configure script.
 
 
 
-#elif 0
+#elif 1
 #define NTL_SPMM_ULL
 
 /*    Like this previous flag, this also causes an "all integer"
@@ -441,7 +441,7 @@ using the configure script.
  *    To re-build after changing this flag: rm *.o; make ntl.a
  */
 
-#elif 1
+#elif 0
 #define NTL_SPMM_ASM
 
 /*    Like this previous two flag, this also causes an "all integer"
