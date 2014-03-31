@@ -57,7 +57,7 @@ void ReadSet(vec_GF2E & set, istream &infile, long m)
 
 	// Read in the vector of integers
 	infile >> r; // uses NTL I/O routine
-
+    cout<<r<<endl;
 	// Convert the integers to elements of GF2E
 	set.SetLength(r.length());
 	for (long j = 0; j < r.length(); j++)

@@ -141,13 +141,12 @@ void OutputSetDifference(ostream &outfile, const vec_GF2E & setDifference)
 {
         ZZ a;
 	    int i;
-
-        outfile << "Set Difference = {\n";
+        //outfile << "Set Difference = {\n";
         for (i = 0; i < setDifference.length(); ++i) {
 	  BinElemToNum(a, setDifference[i]);
-          outfile <<a<<"  "<<setDifference[i]<<endl; // print output in integer form       
+          outfile <<a<<endl; // print output in integer form       
 	}
-        outfile << "}\n";
+        //outfile << "}\n";
 	
 }
 

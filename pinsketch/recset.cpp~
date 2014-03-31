@@ -11,7 +11,7 @@ using namespace std;
 using namespace NTL;  
 
 //从集合差中读取数据   
-int ReadDiffer(std::vector<ZZ> *set ,ifstream& infile )
+int ReadDiffer(std::vector<ZZ> *set ,istream& infile )
 {
     if(set == NULL)
     {
@@ -27,7 +27,7 @@ int ReadDiffer(std::vector<ZZ> *set ,ifstream& infile )
             // getline(infile,line);
             conv(temp,line.c_str());
             (*set).push_back(temp);
-            // cout<<temp<<endl;
+            cout<<temp<<endl;
         }
         infile.close();
         return 1;
@@ -36,30 +36,8 @@ int ReadDiffer(std::vector<ZZ> *set ,ifstream& infile )
 }
 
 //从集合中读取数据
-int ReadSet(std::vector<ZZ> *set, ifstream& infile )
+int ReadSet(std::vector<ZZ> *set, istream& infile )
 {
-    if(set == NULL)
-    {
-        cerr <<  "invalid set" <<endl;
-        return -1;
-    }
-    else
-    {
-        ZZ temp;
-        string line;
-        while(infile>>line)
-        {
-        	//判断是否为数字
-            if(line[0]>'9'||line[0]<'0')
-            	continue;
-            // getline(infile,line);
-            conv(temp,line.c_str());
-            (*set).push_back(temp);
-            // cout<<temp<<endl;
-        }
-        infile.close();
-        return 1;
-    }
 }
 void SetSymmetricDifference(ifstream& infile1,ifstream& infile2)  
 {  
@@ -68,9 +46,22 @@ void SetSymmetricDifference(ifstream& infile1,ifstream& infile2)
     std::vector<ZZ>::iterator it;  
     ZZ temp;
     //输入集合数据
+    /*
+    for(int i=0;i<4;i++)
+	{
+		cin>>temp;
+		i1.push_back(temp);
+		cout<<"add i1:"<<temp<<endl;
+	}
+	*/
 	ReadDiffer(&i1,infile1);
-	ReadSet(&i2,infile2); 
-
+    for(int i=0;i<4;i++)
+	{
+		cin>>temp;
+		i2.push_back(temp);
+		cout<<"add i2:"<<temp<<endl;
+	}
+  
     sort(i1.begin(),i1.end());  
     sort(i2.begin(),i2.end());  
   
@@ -81,15 +72,11 @@ void SetSymmetricDifference(ifstream& infile1,ifstream& infile2)
     size_t size = res.size();  
     //输出集合差  
     printf("size %d\n",size);  
-    ofstream outfile("rec.set");
     for (it=res.begin(); it!=res.end(); ++it)  
     {  
-        cout << '\n' << *it;  
-        outfile << *it <<endl;
+        std::cout << ' ' << *it;  
     }  
-
-    cout << endl;  
-    outfile.close();
+    std::cout << std::endl;  
 }  
  
 
@@ -122,7 +109,7 @@ int main(int argc, char *argv[])
            return -1;
         }
 
-    cout << "SetSymmetricDifference" << endl;  
+    std::cout << "SetSymmetricDifference" << endl;  
     SetSymmetricDifference(infile1,infile2);  
   
     return 0;  
