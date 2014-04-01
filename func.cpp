@@ -7,25 +7,31 @@
 
 #include<iostream>
 #include"func.h"
-#include<map>
-#include<cstdlib>
+
 using namespace std;
 
-string chooseIris(char* ResulTxt)
+void string_replace(string&s1,const string&s2,const string&s3)
 {
-
+	string::size_type pos=0;
+	string::size_type a=s2.size();
+	string::size_type b=s3.size();
+	while((pos=s1.find(s2,pos))!=string::npos)
+	{
+		s1.replace(pos,a,s3);
+		pos+=b;
+	}
 }
 
-int main(int argc,char *argv[])
+string chooseIris(const char* ResulTxt)
 {
-	//    char* filename="/home/sandy/Iris/IRIS4/scores/list_result_matching_inter.txt";
-	const char* filename="/home/sandy/list_result_matching_inter.txt";
-	ifstream infile(filename);
+	ifstream infile(ResulTxt);
 	if(!infile)
 	{
 		cerr << "Could not open files!" << endl;
-		return -1;
+		exit(-1);
 	}
+	
+	//计算每个图像的评分选择最小的那个作为模板
 	string file1,file2,score;
 	map < string, double > mapS; 
 	map < string, double >::iterator iter;
@@ -46,11 +52,23 @@ int main(int argc,char *argv[])
 		//cout<<file1<<" "<<file2<<" "<<score<<endl;
 	}
 	map<string,double>::iterator tempit;
-	for(tempit=mapS.begin();tempit!=mapS.end();tempit++)
+	map<string,double>::iterator minit;
+    
+    //计算最小值
+	for(minit=(tempit=mapS.begin());tempit!=mapS.end();tempit++)
 	{
-		cout<<tempit->first<<"--"<<tempit->second<<endl;
+	    if(tempit->second<minit->second)
+	    {
+	        minit=tempit;
+	    } 
+		//cout<<tempit->first<<"--"<<tempit->second<<endl;
 	}
 	infile.close();
-
-	return 0;
+    cout<<"min:--"<<minit->first<<"--"<<minit->second<<endl;
+    //替换
+    string name=minit->first;
+    string_replace(name,string(".tiff"),string("_code.bmp"));
+    return name;
 }
+
+

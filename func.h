@@ -9,10 +9,11 @@
 #include<iostream>
 #include<cstring>
 #include<fstream>
-
+#include<map>
+#include<cstdlib>
 using namespace std;
 
-string chooseIris(char* ResulTxt);
+string chooseIris(const char* ResulTxt);
 char* getIrisCode(char* IrisTemplate);
 char* parsIris(char* IrisCode,const unsigned int N);
 bool genPinSketch(char** iriset,int t,int m);
