@@ -12,8 +12,25 @@ using namespace std;
 int main(int argc,char *argv[])
 {
 	const char* filename="/home/sandy/Iris/IRIS4/scores/list_result_matching_inter.txt";
+	string iriscodeds="/home/sandy/Iris/out/IrisCodes/";
 	//const char* filename="/home/sandy/list_result_matching_inter.txt";
 	string irisTemplate=chooseIris(filename);
     cout<<"irisTemplate:--"<<irisTemplate<<endl;
+    
+    int width,height;
+    
+    BYTE *data = getIrisCode(iriscodeds+irisTemplate,width,height);
+    cout<<width<<" "<<height<<endl;
+    BYTE** iriset=NULL;
+    parsIris(data,iriset,width*height,1000);
 	return 0;
 }
+
+
+
+/*
+    IplImage *iplImage;
+	iplImage = cvCreateImageHeader(cvSize(512,384),IPL_DEPTH_8U,1);
+	cvSetData(iplImage,data,512);
+	cvSaveImage("test1.bmp",iplImage);
+	*/

@@ -67,8 +67,93 @@ string chooseIris(const char* ResulTxt)
     cout<<"min:--"<<minit->first<<"--"<<minit->second<<endl;
     //替换
     string name=minit->first;
-    string_replace(name,string(".tiff"),string("_code.bmp");
+    string_replace(name,string(".tiff"),string("_code.bmp"));
     return name;
 }
 
+void SaveToFile(unsigned char* buffer, int len)
+{
+    ofstream ofs("byte.bin", ios::out | ios::binary);
+    copy(buffer, buffer + len, ostream_iterator<char>(ofs));
+    ofs.close();
+}
+ 
+
+BYTE* getIrisCode(const string IrisTemplate,int & width,int & height )
+{
+	IplImage *pImage = cvLoadImage(IrisTemplate.c_str(),0);
+    if ( ! pImage)
+    {
+        cout << "Cannot load image : " << IrisTemplate << endl ;
+        exit(-1);
+    }  
+	BYTE* data = (BYTE*)pImage->imageDataOrigin;
+	width=pImage->width;
+	height=pImage->height;
+	//cout<<pImage->depth<<IPL_DEPTH_8U<<endl;
+	 /*//just for test
+	cout<<pImage->width<<" "<<pImage->height<<endl;
+	cout<<pImage->widthStep<<endl;
+	for(int i=0;i<pImage->height;i++)
+	    for(int j=0;j<pImage->width;j++)
+	        data[i*pImage->widthStep+j]=255-data[i*pImage->widthStep+j];  
+	//cvSaveImage("test.bmp",pImage);
+	IplImage *iplImage;
+	iplImage = cvCreateImageHeader(cvSize(pImage->width,pImage->height),IPL_DEPTH_8U,1);
+	cvSetData(iplImage,data,pImage->widthStep);
+	cvSaveImage("test1.bmp",iplImage);*/
+	return data;
+}
+string itos(unsigned char data)
+{
+	string str="";
+	/*// 二进制表示
+	
+	char a[2]={'\0'};
+	for(int i=0;i<8;i++)
+	{
+	    a[0]='0'+(char)(data&0x01);
+	    str=str+string(a);
+	    data>>1;
+	}
+	
+	*/
+	// FF-->1 00-->0 的转化方式
+	if(data)
+	    return str+"1";
+	else
+	    return str+"0";
+
+}
+
+string ByteToStr(BYTE *data,int setlen)
+{
+    string s="";
+    stringstream ss;
+    for(int i=0;i<setlen;i++)
+    {
+        s=itos(data[i])+s;
+    }
+    cout<<s<<endl;
+    return s;
+}
+
+int parsIris(BYTE* IrisCode,BYTE** iriset,const int len,const unsigned int N)
+{
+    int setlen=(int)len/N+1;
+    BYTE* data=(BYTE*)malloc(sizeof(BYTE)*(setlen*N));
+    memset(data,'\0',(setlen*N));
+    memcpy(data,IrisCode,len);
+    iriset = new BYTE*[N];
+    for(int i=0;i<N;i++)
+    {
+        iriset[i]=(BYTE*)malloc(sizeof(BYTE)*setlen);
+        memset(iriset[i],'\0',setlen);
+        memcpy(iriset[i],data+i*setlen,setlen);
+    }
+    //现阶段打算和pinSketch分开进行，故将集合写入集合文件 A.set
+    //ByteToStr(iriset[0],setlen);
+    return 1;
+    
+}
 

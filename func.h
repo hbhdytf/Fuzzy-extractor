@@ -10,12 +10,19 @@
 #include<cstring>
 #include<fstream>
 #include<map>
+#include<stdlib.h>
 #include<cstdlib>
+#include<iterator>
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
+
 using namespace std;
 
+typedef unsigned char BYTE;
+
 string chooseIris(const char* ResulTxt);
-char* getIrisCode(char* IrisTemplate);
-char* parsIris(char* IrisCode,const unsigned int N);
+BYTE* getIrisCode(const string IrisTemplate,int & width,int & height);
+int parsIris(BYTE* IrisCode,BYTE** iriset,const int len,const unsigned int N);
 bool genPinSketch(char** iriset,int t,int m);
 char* ranCode(char* iriscode);
 bool genKeySketch(char* iriscode,char key);
