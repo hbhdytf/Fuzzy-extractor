@@ -144,6 +144,7 @@ int parsIris(BYTE* IrisCode,BYTE** iriset,const int len,const unsigned int N)
     BYTE* data=(BYTE*)malloc(sizeof(BYTE)*(setlen*N));
     memset(data,'\0',(setlen*N));
     memcpy(data,IrisCode,len);
+ 	
     iriset = new BYTE*[N];
     for(int i=0;i<N;i++)
     {
@@ -152,8 +153,25 @@ int parsIris(BYTE* IrisCode,BYTE** iriset,const int len,const unsigned int N)
         memcpy(iriset[i],data+i*setlen,setlen);
     }
     //现阶段打算和pinSketch分开进行，故将集合写入集合文件 A.set
-    //ByteToStr(iriset[0],setlen);
+    ofstream wriSet("Iris.set");
+    wriSet<<"t="<<T<<endl;
+    wriSet<<"m="<<M<<endl<<endl;
+    wriSet<<"["<<endl;
+    for(int i=0;i<N;i++)
+    {
+        wriSet<<ByteToStr(iriset[i],setlen)<<endl;
+    }
+    wriSet<<"]"<<endl;
+    wriSet.close();
+    
+    //释放数据
+    for(int i=0;i<N;i++)
+        free(iriset[i]);
+    free(data);  
+    delete iriset;
     return 1;
     
 }
+
+
 

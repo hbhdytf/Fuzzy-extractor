@@ -18,11 +18,11 @@ int main(int argc,char *argv[])
     cout<<"irisTemplate:--"<<irisTemplate<<endl;
     
     int width,height;
-    
+    //irisTemplate="S1001L06_code.bmp";
     BYTE *data = getIrisCode(iriscodeds+irisTemplate,width,height);
     cout<<width<<" "<<height<<endl;
     BYTE** iriset=NULL;
-    parsIris(data,iriset,width*height,1000);
+    parsIris(data,iriset,width*height,Num);
 	return 0;
 }
 
