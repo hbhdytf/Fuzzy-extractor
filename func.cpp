@@ -145,8 +145,9 @@ string ByteToStr(BYTE *data, int setlen)
 	return s;
 }
 
-int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,string setName)
+int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,string setName)
 {
+	int N=config.Num;
 	int setlen = len % N == 0 ? len / N : (int) len / N + 1;
 	BYTE* data = (BYTE*) malloc(sizeof(BYTE) * (setlen * N));
 	memset(data, '\0', (setlen * N));
@@ -161,8 +162,8 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,
 	}
 	//现阶段打算和pinSketch分开进行，故将集合写入集合文件 A.set
 	ofstream wriSet(setName.c_str());
-	wriSet << "t=" << T << endl;
-	wriSet << "m=" << M << endl << endl;
+	wriSet << "t=" << config.T << endl;
+	wriSet << "m=" << config.M << endl << endl;
 	wriSet << "[" << endl;
 	for (int i = 0; i < N; i++)
 	{
@@ -180,17 +181,17 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,
 
 }
 
-int genR(BYTE** r)
+int genR(BYTE** r,int rlen)
 {
 	const int LEN = 62; //26+26+10
 	//char* charset=new char[LEN];//{'0','1','2','3','4','5','6','7','8','9',ABCDEFGHIGKLMNOPQ}
 	//memset(charset,'\0',LEN);
 	BYTE charset[] =
 			"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	*r = (BYTE*)malloc(sizeof(BYTE)*RLEN);
-	memset(*r, '\0', RLEN + 1);
+	*r = (BYTE*)malloc(sizeof(BYTE)*rlen);
+	memset(*r, '\0', rlen + 1);
 	srand((unsigned) time(0));
-	for (int i = 0; i < RLEN; i++)
+	for (int i = 0; i < rlen; i++)
 	{
 		(*r)[i] = charset[(rand() % LEN)];
 	}
@@ -198,7 +199,7 @@ int genR(BYTE** r)
 	return 0;
 }
 
-unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode)
+unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode,Config config)
 {
 	static unsigned char m[SHA_DIGEST_LENGTH];
 	if(rancode==NULL)
@@ -206,9 +207,9 @@ unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* ranc
 	EVP_MD_CTX c;
 	EVP_MD_CTX_init(&c);
 	//EVP_Digest(iriscode,len,rancode,NULL,EVP_sha1(),NULL);
-	EVP_DigestInit_ex(&c,DIGEST,NULL);
+	EVP_DigestInit_ex(&c,config.digest,NULL);
 	EVP_DigestUpdate(&c,iriscode,len);
-	EVP_DigestUpdate(&c,r,RLEN);
+	EVP_DigestUpdate(&c,r,config.rlen);
 	EVP_DigestFinal_ex(&c,rancode,NULL);
 
 	//两种打印SHA-1的方法
@@ -225,24 +226,29 @@ unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* ranc
 }
 
 //int genPinSketch(const string filename)
-int writeConfig(BYTE* r)
+int writeConfig(Config wconfig)
 {
 	GKeyFile* config=g_key_file_new();
-	gsize length=0;
-	g_key_file_set_integer(config,"IRIS","NUM",Num);
-	g_key_file_set_integer(config,"IRIS","T",T);
-	g_key_file_set_integer(config,"IRIS","M",M);
-	g_key_file_set_string(config,"IRIS","DIGEST",DIGEST_NAME);
-	const char* ran=(char*)r;
+	unsigned int length=0;
+	g_key_file_set_integer(config,"IRIS","NUM",wconfig.Num);
+	g_key_file_set_integer(config,"IRIS","T",wconfig.T);
+	g_key_file_set_integer(config,"IRIS","M",wconfig.M);
+	g_key_file_set_string(config,"IRIS","DIGEST",(gchar* )wconfig.digest_name.c_str());
+	const char* ran=(char*)wconfig.r;
 	g_key_file_set_string(config,"IRIS","R",ran);
-	gchar* content=g_key_file_to_data(config,&length,NULL);
+	gchar* content=(gchar *)g_key_file_to_data(config,&length,NULL);
 	g_print("%s\n",content);
 	FILE* fp= fopen("config.ini","w");
 	if(fp==NULL)
 		return -1;
-	fwrite(content,1,length,fp);
+	fwrite((const void*)content,1,(unsigned int)length,fp);
 	fclose(fp);
 	g_key_file_free(config);
 	return 0;
 
+}
+int readConfig();
+BYTE* RecData(string setname)
+{
+	return NULL;
 }

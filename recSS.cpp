@@ -6,21 +6,25 @@
  */
 #include<iostream>
 #include"func.h"
+#include"./pinsketch/pinsketch.h"
 using namespace std;
-
+Config config={1280};
 int main(int argc, char *argv[])
 {
+	config.M=64;
+	config.T=2000;
+	config.Num=1280;
 	int width, height;
 	string iriscodeds = "/home/sandy/USIT/";
 	string testTemplate = "02_02.bmp";
 	BYTE *data = getIrisCode(iriscodeds + testTemplate, width, height);
 	BYTE** iriset = NULL;
-	parsIris(data, iriset, width * height, Num, "Test.set");
-	FILE *fp;
-	fp = popen("./pinsketch/differ Template.ss Test.set", "r");
-	pclose(fp);
-//	fp = popen("./pinsketch/recset differ.set Test.set", "r");
-//	pclose(fp);
+	parsIris(data, iriset, width * height, config, "Test.set");
+
+	DifferSet("Template.ss","Test.set");
+	RecSet("differ.set","Test.set");
+
+
 	return 0;
 }
 

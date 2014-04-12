@@ -23,35 +23,47 @@
 #include <glib-2.0/glib/gkeyfile.h>
 
 using namespace std;
-#ifndef Num
+#ifndef SETNum
 //N 表示将IrisCode分割为N段
-#define Num 1280
+#define SETNum 1280
 #endif
 
 //计算集合差时的输入，t表示最大集合差元素个数的门限值
 //m表示基于的有限域GF(2^m)，且t<=2^(m-1)
-#ifndef T
-#define T 2000
-#define M 64
+#ifndef SETT
+#define SETT 2000
+#define SETM 64
 #define DIGEST EVP_sha1()
 #define DIGEST_NAME "SHA1"
 #endif
 
+
 typedef unsigned char BYTE;
 
+
+typedef struct Config
+{
+	int Num;
+	int T;
+	int M;
+	const EVP_MD* digest;
+	string digest_name;
+	BYTE* r;
+	int rlen;
+}Config;
 //虹膜特征处理阶段
 string chooseIris(const char* ResulTxt);
 BYTE* getIrisCode(const string IrisTemplate, int & width, int & height);
-int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,
+int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,
 		string Setname);
 
 //产生Iris Sketch阶段，初步使用现有的pinsketch程序
 bool genPinSketch(char** iriset, int t, int m);
 
 //密钥处理阶段
-int genR(BYTE** r);
+int genR(BYTE** r,int rlen);
 unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
-		unsigned char* rancode);
+		unsigned char* rancode,Config config);
 bool genKeySketch(char* iriscode, char key);
-int writeConfig(BYTE* r);
+int writeConfig(Config wconfig);
 #endif

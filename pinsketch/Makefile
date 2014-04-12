@@ -13,7 +13,9 @@
 
 CXXFLAGS = -g -Wno-deprecated
 
-all: sketch differ recset 
+OBJSO= libpinsketch.so
+
+all: sketch differ recset $(OBJSO)
 
 bch.o: bch.cpp pinsketch.h
 	g++ $(CXXFLAGS) -c bch.cpp 
@@ -26,14 +28,19 @@ sketch.o: sketch.cpp pinsketch.h
 
 differ.o: differ.cpp pinsketch.h
 	g++ $(CXXFLAGS) -c differ.cpp 
-recset.o: recset.cpp
+recset.o: recset.cpp pinsketch.h
 	g++ $(CXXFLAGS) -c recset.cpp
+pinsketch.o:pinsketch.cpp pinsketch.h
+	g++ $(CXXFLAGS) -c pinsketch.cpp	
+	
 sketch: sketch.o bch.o io.o pinsketch.h
 	g++  $(CXXFLAGS) sketch.o io.o bch.o -lntl -o sketch
 
 differ: differ.o bch.o io.o pinsketch.h
 	g++ $(CXXFLAGS) differ.o io.o bch.o -lntl -o differ
-recset: recset.o
-	g++ $(CXXFLAGS) recset.o -lntl -o recset
+recset: bch.o io.o recset.o 
+	g++ $(CXXFLAGS) $^ -lntl -o recset
+$(OBJSO):pinsketch.o bch.o io.o pinsketch.h
+	g++ -shared -fPIC $^ -o $@ -lntl
 clean:
-	rm differ sketch recset bch.o io.o sketch.o differ.o recset.o
+	rm differ sketch recset bch.o io.o sketch.o differ.o recset.o pinsketch.o $(OBJSO)

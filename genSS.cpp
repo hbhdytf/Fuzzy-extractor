@@ -8,9 +8,18 @@
 #include<iostream>
 #include"func.h"
 using namespace std;
+Config config={NULL};
 
 int main(int argc, char *argv[])
 {
+
+	config.M=SETM;
+	config.T=SETT;
+	config.Num=SETNum;
+	config.digest=EVP_sha1();
+	config.digest_name=string("SHA1");
+	config.rlen=256;
+
 	const char* filename =
 			"/home/sandy/Iris/IRIS4/scores/list_result_matching_inter.txt";
 	string iriscodeds = "/home/sandy/USIT/";
@@ -24,18 +33,19 @@ int main(int argc, char *argv[])
 	BYTE *data = getIrisCode(iriscodeds + irisTemplate, width, height);
 	cout << width << " " << height << endl;
 	BYTE** iriset = NULL;
-	parsIris(data, iriset, width * height, Num, "Template.set");
+	parsIris(data, iriset, width * height, config, "Template.set");
 
 	BYTE* r = NULL;
-	genR(&r);
+	genR(&r,config.rlen);
 	cout << "rand:\t" << r << endl;
+	config.r=r;
 	unsigned char md[SHA_DIGEST_LENGTH];
-	unsigned char *digest = ranCode(data, width * height, r, md);
+	unsigned char *digest = ranCode(data, width * height, config.r, md,config);
 
 	FILE *fp;
 	fp = popen("./pinsketch/sketch Template.set", "r");
 	pclose(fp);
-	writeConfig(r);
+	writeConfig(config);
 	free(r);
 	free(iriset);
 //	free(data);
