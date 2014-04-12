@@ -6,7 +6,7 @@ SUBDIRS=pinsketch
 #
 .PHONY:default all clean $(SUBDIRS) 
 default:all
-all:prep main $(SUBDIRS) 
+all:prep genSS $(SUBDIRS) 
 
 prep:
 	if [ -d bin ]; then echo '' > /dev/null; else mkdir bin; fi
@@ -14,9 +14,9 @@ prep:
 
 func.o: func.cpp func.h
 	$(CXX) $(CXXFLAGS) -c $< -o tmp/func.o $(LDFLAGS_CXX)
-main.o: main.cpp func.h
+genSS.o: genSS.cpp func.h
 	$(CXX) $(CXXFLAGS)  -c $< -o tmp/main.o $(LDFLAGS_CXX)
-main:prep func.o main.o
+genSS:prep func.o genSS.o
 	$(CXX) $(CXXFLAGS)  tmp/*.o -o $@ $(LDFLAGS_CXX)
 $(SUBDIRS):
 	$(MAKE) -C $@ all
