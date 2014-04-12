@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 	BYTE *data = getIrisCode(iriscodeds + irisTemplate, width, height);
 	cout << width << " " << height << endl;
 	BYTE** iriset = NULL;
-	parsIris(data, iriset, width * height, Num);
+	parsIris(data, iriset, width * height, Num, "Template.set");
 
 	BYTE* r = NULL;
 	genR(&r);
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	unsigned char *digest = ranCode(data, width * height, r, md);
 
 	FILE *fp;
-	fp=popen("./pinsketch/sketch Template.set","r");
+	fp = popen("./pinsketch/sketch Template.set", "r");
 	pclose(fp);
 	writeConfig(r);
 	free(r);

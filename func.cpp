@@ -145,7 +145,7 @@ string ByteToStr(BYTE *data, int setlen)
 	return s;
 }
 
-int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N)
+int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,string setName)
 {
 	int setlen = len % N == 0 ? len / N : (int) len / N + 1;
 	BYTE* data = (BYTE*) malloc(sizeof(BYTE) * (setlen * N));
@@ -160,7 +160,7 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N)
 		memcpy(iriset[i], data + i * setlen, setlen);
 	}
 	//现阶段打算和pinSketch分开进行，故将集合写入集合文件 A.set
-	ofstream wriSet("Template.set");
+	ofstream wriSet(setName.c_str());
 	wriSet << "t=" << T << endl;
 	wriSet << "m=" << M << endl << endl;
 	wriSet << "[" << endl;

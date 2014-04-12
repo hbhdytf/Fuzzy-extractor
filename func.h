@@ -42,15 +42,16 @@ typedef unsigned char BYTE;
 //虹膜特征处理阶段
 string chooseIris(const char* ResulTxt);
 BYTE* getIrisCode(const string IrisTemplate, int & width, int & height);
-int parsIris(BYTE* IrisCode, BYTE** iriset, const int len,
-		const unsigned int N);
+int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N,
+		string Setname);
 
 //产生Iris Sketch阶段，初步使用现有的pinsketch程序
 bool genPinSketch(char** iriset, int t, int m);
 
 //密钥处理阶段
 int genR(BYTE** r);
-unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode);
+unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
+		unsigned char* rancode);
 bool genKeySketch(char* iriscode, char key);
 int writeConfig(BYTE* r);
 #endif
