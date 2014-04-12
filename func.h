@@ -15,20 +15,27 @@
 #include<iterator>
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
+#include <openssl/sha.h>
+#include <openssl/evp.h>
+#include <openssl/crypto.h>
+#include <glib-2.0/glib.h>
+#include <glib-2.0/glib/gkeyfile.h>
 
 using namespace std;
 #ifndef Num
 //N 表示将IrisCode分割为N段
 #define Num 1280
 #endif
+
 //计算集合差时的输入，t表示最大集合差元素个数的门限值
 //m表示基于的有限域GF(2^m)，且t<=2^(m-1)
 #ifndef T
 #define T 2000
-#endif
-#ifndef M
 #define M 64
+#define DIGEST EVP_sha1()
+#define DIGEST_NAME "SHA1"
 #endif
+
 typedef unsigned char BYTE;
 
 //虹膜特征处理阶段
@@ -41,7 +48,8 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len,
 bool genPinSketch(char** iriset, int t, int m);
 
 //密钥处理阶段
-char* ranCode(char* iriscode);
+int genR(BYTE** r);
+unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode);
 bool genKeySketch(char* iriscode, char key);
-int writeConfig(int N, string digest);
+int writeConfig(BYTE* r);
 #endif

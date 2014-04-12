@@ -11,7 +11,7 @@
 # NTL creates these when you install it according to NTL instructions.
 # See http://www.shoup.net/ntl for more.
 
-CXXFLAGS = -Wno-deprecated
+CXXFLAGS = -g -Wno-deprecated
 
 all: sketch differ recset
 

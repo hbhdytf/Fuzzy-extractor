@@ -10,6 +10,11 @@
 
 using namespace std;
 
+#ifndef RLEN
+//随机的r的长度
+#define RLEN 256
+#endif
+
 void string_replace(string&s1, const string&s2, const string&s3)
 {
 	string::size_type pos = 0;
@@ -155,7 +160,7 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N)
 		memcpy(iriset[i], data + i * setlen, setlen);
 	}
 	//现阶段打算和pinSketch分开进行，故将集合写入集合文件 A.set
-	ofstream wriSet("Iris.set");
+	ofstream wriSet("Template.set");
 	wriSet << "t=" << T << endl;
 	wriSet << "m=" << M << endl << endl;
 	wriSet << "[" << endl;
@@ -175,3 +180,69 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, const unsigned int N)
 
 }
 
+int genR(BYTE** r)
+{
+	const int LEN = 62; //26+26+10
+	//char* charset=new char[LEN];//{'0','1','2','3','4','5','6','7','8','9',ABCDEFGHIGKLMNOPQ}
+	//memset(charset,'\0',LEN);
+	BYTE charset[] =
+			"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	*r = (BYTE*)malloc(sizeof(BYTE)*RLEN);
+	memset(*r, '\0', RLEN + 1);
+	srand((unsigned) time(0));
+	for (int i = 0; i < RLEN; i++)
+	{
+		(*r)[i] = charset[(rand() % LEN)];
+	}
+	//cout << "genR" << *r << endl;
+	return 0;
+}
+
+unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode)
+{
+	static unsigned char m[SHA_DIGEST_LENGTH];
+	if(rancode==NULL)
+		rancode=m;
+	EVP_MD_CTX c;
+	EVP_MD_CTX_init(&c);
+	//EVP_Digest(iriscode,len,rancode,NULL,EVP_sha1(),NULL);
+	EVP_DigestInit_ex(&c,DIGEST,NULL);
+	EVP_DigestUpdate(&c,iriscode,len);
+	EVP_DigestUpdate(&c,r,RLEN);
+	EVP_DigestFinal_ex(&c,rancode,NULL);
+
+	//两种打印SHA-1的方法
+	for(int i=0;i<SHA_DIGEST_LENGTH;i++)
+		printf("%02x",rancode[i]);
+	cout<<endl;
+	for(int i=0;i<SHA_DIGEST_LENGTH;i++)
+		cout << hex << setw(2) << setfill('0') << (int)rancode[i];
+	cout<<endl;
+
+
+	EVP_MD_CTX_cleanup(&c);
+	return rancode;
+}
+
+//int genPinSketch(const string filename)
+int writeConfig(BYTE* r)
+{
+	GKeyFile* config=g_key_file_new();
+	gsize length=0;
+	g_key_file_set_integer(config,"IRIS","NUM",Num);
+	g_key_file_set_integer(config,"IRIS","T",T);
+	g_key_file_set_integer(config,"IRIS","M",M);
+	g_key_file_set_string(config,"IRIS","DIGEST",DIGEST_NAME);
+	const char* ran=(char*)r;
+	g_key_file_set_string(config,"IRIS","R",ran);
+	gchar* content=g_key_file_to_data(config,&length,NULL);
+	g_print("%s\n",content);
+	FILE* fp= fopen("config.ini","w");
+	if(fp==NULL)
+		return -1;
+	fwrite(content,1,length,fp);
+	fclose(fp);
+	g_key_file_free(config);
+	return 0;
+
+}
