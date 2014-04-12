@@ -11,9 +11,10 @@ using namespace std;
 Config config={1280};
 int main(int argc, char *argv[])
 {
-	config.M=64;
-	config.T=2000;
-	config.Num=1280;
+	//config.M=64;
+	//config.T=2000;
+	//config.Num=1280;
+	readConfig("config.ini",config);
 	int width, height;
 	string iriscodeds = "/home/sandy/USIT/";
 	string testTemplate = "02_02.bmp";

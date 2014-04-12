@@ -66,4 +66,5 @@ unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
 		unsigned char* rancode,Config config);
 bool genKeySketch(char* iriscode, char key);
 int writeConfig(Config wconfig);
+int readConfig(string filename, Config &rconfig);
 #endif

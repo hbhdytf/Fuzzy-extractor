@@ -145,9 +145,10 @@ string ByteToStr(BYTE *data, int setlen)
 	return s;
 }
 
-int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,string setName)
+int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,
+		string setName)
 {
-	int N=config.Num;
+	int N = config.Num;
 	int setlen = len % N == 0 ? len / N : (int) len / N + 1;
 	BYTE* data = (BYTE*) malloc(sizeof(BYTE) * (setlen * N));
 	memset(data, '\0', (setlen * N));
@@ -181,14 +182,14 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,string 
 
 }
 
-int genR(BYTE** r,int rlen)
+int genR(BYTE** r, int rlen)
 {
 	const int LEN = 62; //26+26+10
 	//char* charset=new char[LEN];//{'0','1','2','3','4','5','6','7','8','9',ABCDEFGHIGKLMNOPQ}
 	//memset(charset,'\0',LEN);
 	BYTE charset[] =
 			"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	*r = (BYTE*)malloc(sizeof(BYTE)*rlen);
+	*r = (BYTE*) malloc(sizeof(BYTE) * rlen);
 	memset(*r, '\0', rlen + 1);
 	srand((unsigned) time(0));
 	for (int i = 0; i < rlen; i++)
@@ -199,27 +200,27 @@ int genR(BYTE** r,int rlen)
 	return 0;
 }
 
-unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* rancode,Config config)
+unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
+		unsigned char* rancode, Config config)
 {
 	static unsigned char m[SHA_DIGEST_LENGTH];
-	if(rancode==NULL)
-		rancode=m;
+	if (rancode == NULL)
+		rancode = m;
 	EVP_MD_CTX c;
 	EVP_MD_CTX_init(&c);
 	//EVP_Digest(iriscode,len,rancode,NULL,EVP_sha1(),NULL);
-	EVP_DigestInit_ex(&c,config.digest,NULL);
-	EVP_DigestUpdate(&c,iriscode,len);
-	EVP_DigestUpdate(&c,r,config.rlen);
-	EVP_DigestFinal_ex(&c,rancode,NULL);
+	EVP_DigestInit_ex(&c, config.digest, NULL);
+	EVP_DigestUpdate(&c, iriscode, len);
+	EVP_DigestUpdate(&c, r, config.rlen);
+	EVP_DigestFinal_ex(&c, rancode, NULL);
 
 	//两种打印SHA-1的方法
-	for(int i=0;i<SHA_DIGEST_LENGTH;i++)
-		printf("%02x",rancode[i]);
-	cout<<endl;
-	for(int i=0;i<SHA_DIGEST_LENGTH;i++)
-		cout << hex << setw(2) << setfill('0') << (int)rancode[i];
-	cout<<endl;
-
+	for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
+		printf("%02x", rancode[i]);
+	cout << endl;
+	for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
+		cout << hex << setw(2) << setfill('0') << (int) rancode[i];
+	cout << endl;
 
 	EVP_MD_CTX_cleanup(&c);
 	return rancode;
@@ -228,26 +229,63 @@ unsigned char* ranCode(BYTE* iriscode,const int len, BYTE* r,unsigned char* ranc
 //int genPinSketch(const string filename)
 int writeConfig(Config wconfig)
 {
-	GKeyFile* config=g_key_file_new();
-	unsigned int length=0;
-	g_key_file_set_integer(config,"IRIS","NUM",wconfig.Num);
-	g_key_file_set_integer(config,"IRIS","T",wconfig.T);
-	g_key_file_set_integer(config,"IRIS","M",wconfig.M);
-	g_key_file_set_string(config,"IRIS","DIGEST",(gchar* )wconfig.digest_name.c_str());
-	const char* ran=(char*)wconfig.r;
-	g_key_file_set_string(config,"IRIS","R",ran);
-	gchar* content=(gchar *)g_key_file_to_data(config,&length,NULL);
-	g_print("%s\n",content);
-	FILE* fp= fopen("config.ini","w");
-	if(fp==NULL)
+	GKeyFile* config = g_key_file_new();
+	unsigned int length = 0;
+	g_key_file_set_integer(config, "IRIS", "NUM", wconfig.Num);
+	g_key_file_set_integer(config, "IRIS", "T", wconfig.T);
+	g_key_file_set_integer(config, "IRIS", "M", wconfig.M);
+	g_key_file_set_string(config, "IRIS", "DIGEST",
+			(gchar*) wconfig.digest_name.c_str());
+	g_key_file_set_integer(config, "IRIS", "RLEN", wconfig.rlen);
+	const char* ran = (char*) wconfig.r;
+	g_key_file_set_string(config, "IRIS", "R", ran);
+	gchar* content = (gchar *) g_key_file_to_data(config, &length, NULL);
+	g_print("%s\n", content);
+	FILE* fp = fopen("config.ini", "w");
+	if (fp == NULL)
 		return -1;
-	fwrite((const void*)content,1,(unsigned int)length,fp);
+	fwrite((const void*) content, 1, (unsigned int) length, fp);
 	fclose(fp);
 	g_key_file_free(config);
 	return 0;
 
 }
-int readConfig();
+int readConfig(string filename, Config &rconfig)
+{
+	GKeyFile* config = g_key_file_new();
+	g_key_file_load_from_file(config, (const gchar*) filename.c_str(),
+			(GKeyFileFlags) (G_KEY_FILE_KEEP_COMMENTS
+					| G_KEY_FILE_KEEP_TRANSLATIONS), NULL);
+
+	gint num = g_key_file_get_integer(config, "IRIS", "NUM", NULL);
+	g_print("NUM=%d\n", num);
+
+	gint t = g_key_file_get_integer(config, "IRIS", "T", NULL);
+	g_print("T=%d\n", t);
+
+	gint m = g_key_file_get_integer(config, "IRIS", "M", NULL);
+	g_print("M=%d\n", m);
+
+	gchar* digest = g_key_file_get_string(config, "IRIS", "DIGEST", NULL);
+	g_print("DIGEST=%s\n",digest);
+
+	gint rlen = g_key_file_get_integer(config, "IRIS", "RLEN", NULL);
+	g_print("RLEN=%d\n", rlen);
+
+	gchar* r = g_key_file_get_string(config, "IRIS", "R", NULL);
+	g_print("R=%s\n",r);
+
+	rconfig.Num=num;
+	rconfig.M=m;
+	rconfig.T=t;
+	rconfig.digest_name=string(digest);
+	rconfig.rlen=rlen;
+	rconfig.r=(BYTE*)r;
+	rconfig.digest=EVP_sha1();
+
+	g_key_file_free(config);
+	return 0;
+}
 BYTE* RecData(string setname)
 {
 	return NULL;
