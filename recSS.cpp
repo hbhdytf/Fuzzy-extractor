@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 	FILE *fp;
 	fp = popen("./pinsketch/differ Template.ss Test.set", "r");
 	pclose(fp);
-	fp = popen("./pinsketch/recset differ.set Test.set", "r");
-	pclose(fp);
+//	fp = popen("./pinsketch/recset differ.set Test.set", "r");
+//	pclose(fp);
 	return 0;
 }
 

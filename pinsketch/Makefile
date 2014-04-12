@@ -13,7 +13,7 @@
 
 CXXFLAGS = -g -Wno-deprecated
 
-all: sketch differ recset
+all: sketch differ recset 
 
 bch.o: bch.cpp pinsketch.h
 	g++ $(CXXFLAGS) -c bch.cpp 
