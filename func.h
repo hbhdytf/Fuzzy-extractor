@@ -7,6 +7,7 @@
 #ifndef __FUNC_H
 #define __FUNC_H
 #include<iostream>
+#include<iomanip>
 #include<cstring>
 #include<fstream>
 #include<map>
@@ -18,7 +19,7 @@
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <openssl/crypto.h>
-#include <glib-2.0/glib.h>
+#include <glib.h>
 #include <glib-2.0/glib/gkeyfile.h>
 
 using namespace std;
