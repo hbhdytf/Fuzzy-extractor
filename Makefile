@@ -1,8 +1,13 @@
 CXX = g++
 CXXFLAGS = -g
+#编译时的依赖环境，包括openssl opencv 和gtk+-2.0
+#openssl-->>虹膜随机化时使用到，即产生最终KEY
+#opencv-->>获取虹膜特征图像的数据时使用
+#gtk+-2.0-->>在操作配置文件时使用到
 LDFLAGS_CXX =`pkg-config opencv openssl gtk+-2.0 --cflags --libs`
 SUBDIRS=pinsketch
 BIN=genSS recSS
+#指定动态库的链接路径和执行搜索路径为/pinsketch ，NTL为运算库 
 SOFLAGS_CXX = -L./pinsketch -lpinsketch -lntl -Wl,-rpath,./pinsketch/
 
 #显式指定clean为伪目标，防止在当前目录下存在clean文件是无法执行清理工作

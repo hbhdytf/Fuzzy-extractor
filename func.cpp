@@ -110,6 +110,8 @@ getIrisCode(const string IrisTemplate, int & width, int & height)
 	 cvSaveImage("test1.bmp",iplImage);*/
 	return data;
 }
+
+//将char字符转为string类型
 string ctos(unsigned char data)
 {
 	string str = "";
@@ -133,6 +135,7 @@ string ctos(unsigned char data)
 	 */
 }
 
+//将byte* 转为二进制字符串
 string ByteToStr(BYTE *data, int setlen)
 {
 	string s = "";
@@ -149,6 +152,7 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,
 		string setName)
 {
 	int N = config.Num;
+	//计算分段后每段的大小
 	int setlen = len % N == 0 ? len / N : (int) len / N + 1;
 	BYTE* data = (BYTE*) malloc(sizeof(BYTE) * (setlen * N));
 	memset(data, '\0', (setlen * N));
@@ -206,6 +210,7 @@ unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
 	static unsigned char m[SHA_DIGEST_LENGTH];
 	if (rancode == NULL)
 		rancode = m;
+	//OPENSSL evp文件夹下的实现计算两段数据和起来的SHA1值
 	EVP_MD_CTX c;
 	EVP_MD_CTX_init(&c);
 	//EVP_Digest(iriscode,len,rancode,NULL,EVP_sha1(),NULL);
@@ -229,6 +234,7 @@ unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
 //int genPinSketch(const string filename)
 int writeConfig(Config wconfig)
 {
+	//使用glib中GKeyFile的方法写入配置文件 需要指定编译的库gtk+-2.0
 	GKeyFile* config = g_key_file_new();
 	unsigned int length = 0;
 	g_key_file_set_integer(config, "IRIS", "NUM", wconfig.Num);
@@ -241,6 +247,8 @@ int writeConfig(Config wconfig)
 	g_key_file_set_string(config, "IRIS", "R", ran);
 	gchar* content = (gchar *) g_key_file_to_data(config, &length, NULL);
 	g_print("%s\n", content);
+	
+	//记录
 	FILE* fp = fopen("config.ini", "w");
 	if (fp == NULL)
 		return -1;
@@ -289,12 +297,14 @@ int readConfig(string filename, Config &rconfig)
 
 string itoa(int i)
 {
+	//Linux下或者说标准C中没有itoa函数，使用sprintf代替
 	char str[25];
 	sprintf(str, "%d", i); //换成这一句吧^_^
 	//printf("integer = %d string = %s\n", i, str);
 	return string(str);
 }
 
+//将string 类型和根据setlen恢复BYTE* ，其实setlen 可以根据data.length()计算
 BYTE* StrToByte(string data, int setlen)
 {
 	BYTE* rdata = (BYTE*) malloc(sizeof(BYTE) * setlen);
@@ -349,6 +359,7 @@ BYTE* RecData(string setname, Config config)
 		}
 		temp = StrToByte(data, setlen);
 		//strcat((char *)rdata,(char *)temp);
+		//Eclipse在此处数组显示有问题
 		memcpy(rdata+(i-1)*setlen,temp,setlen);
 		//cout<<"i:"<<i<<"\t data:"<<data<<endl;
 
