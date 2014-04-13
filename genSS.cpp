@@ -8,11 +8,14 @@
 #include<iostream>
 #include"func.h"
 using namespace std;
+
+//初始化不指定，但是必须写NULL
 Config config={NULL};
 
 int main(int argc, char *argv[])
 {
 
+	//写入配置参数
 	config.M=SETM;
 	config.T=SETT;
 	config.Num=SETNum;
@@ -42,9 +45,12 @@ int main(int argc, char *argv[])
 	unsigned char md[SHA_DIGEST_LENGTH];
 	unsigned char *digest = ranCode(data, width * height, config.r, md,config);
 
+	//启动进程sketch生成模板popen读入程序返回的值
 	FILE *fp;
 	fp = popen("./pinsketch/sketch Template.set", "r");
 	pclose(fp);
+
+	//记录配置文件，恢复时需要
 	writeConfig(config);
 	free(r);
 	free(iriset);

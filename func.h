@@ -40,7 +40,7 @@ using namespace std;
 
 typedef unsigned char BYTE;
 
-
+//写入配置文件的选项，可扩展，恢复SS所需要的一些参数
 typedef struct Config
 {
 	int Num;
@@ -51,6 +51,7 @@ typedef struct Config
 	BYTE* r;
 	int rlen;
 }Config;
+
 //虹膜特征处理阶段
 string chooseIris(const char* ResulTxt);
 BYTE* getIrisCode(const string IrisTemplate, int & width, int & height);
@@ -61,11 +62,15 @@ int parsIris(BYTE* IrisCode, BYTE** iriset, const int len, Config config,
 bool genPinSketch(char** iriset, int t, int m);
 
 //密钥处理阶段
-int genR(BYTE** r,int rlen);
+int genR(BYTE** r,int rlen);	//产生随机字符串
 unsigned char* ranCode(BYTE* iriscode, const int len, BYTE* r,
 		unsigned char* rancode,Config config);
 bool genKeySketch(char* iriscode, char key);
+
+//读写配置文件的函数
 int writeConfig(Config wconfig);
 int readConfig(string filename, Config &rconfig);
+
+//恢复数据
 BYTE* RecData(string setname,Config config);
 #endif

@@ -4,6 +4,7 @@ LDFLAGS_CXX =`pkg-config opencv openssl gtk+-2.0 --cflags --libs`
 SUBDIRS=pinsketch
 BIN=genSS recSS
 SOFLAGS_CXX = -L./pinsketch -lpinsketch -lntl -Wl,-rpath,./pinsketch/
+
 #显式指定clean为伪目标，防止在当前目录下存在clean文件是无法执行清理工作
 .PHONY:default all clean $(SUBDIRS) del
 default:all
@@ -35,7 +36,7 @@ $(SUBDIRS):
 	$(MAKE) -C $@ all
 	
 del:
-	@rm *.o
+	@rm *.o  #命令前加@，可以不显示该调用
 clean:
 	rm -rf  *.o
 	$(MAKE) -C $(SUBDIRS) clean

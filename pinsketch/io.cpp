@@ -164,7 +164,7 @@ void OutputSS(ostream &outfile, const vec_GF2E & ss, long d, const GF2X & irrP)
 }
 
 
-//从集合差中读取数据
+//从集合差中读取数据 到ZZ大整数类的迭代器中
 
 
 int ReadDiffer(std::vector<ZZ> *set ,ifstream& infile )
@@ -231,13 +231,15 @@ void SetSymmetricDifference(ifstream& infile1,ifstream& infile2)
     sort(i2.begin(),i2.end());
 
     vector<ZZ> res(i2.size()+i1.size());
-    //对称差
+    //对称差 使用algorithm中的结合差函数
     it = set_symmetric_difference(i1.begin(),i1.end(),i2.begin(),i2.end(),res.begin());
     res.resize(it-res.begin());
     size_t size = res.size();
     //输出集合差
     printf("size %d\n",size);
     ofstream outfile("rec.set");
+
+	//TODO 遍历并输出，将其输出到数组中并传入Rec
     for (it=res.begin(); it!=res.end(); ++it)
     {
         //cout << '\n' << *it;

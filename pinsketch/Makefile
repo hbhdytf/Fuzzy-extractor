@@ -40,6 +40,8 @@ differ: differ.o bch.o io.o pinsketch.h
 	g++ $(CXXFLAGS) differ.o io.o bch.o -lntl -o differ
 recset: bch.o io.o recset.o 
 	g++ $(CXXFLAGS) $^ -lntl -o recset
+
+#动态链接库的生成
 $(OBJSO):pinsketch.o bch.o io.o pinsketch.h
 	g++ -shared -fPIC $^ -o $@ -lntl
 clean:
