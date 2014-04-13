@@ -110,7 +110,7 @@ getIrisCode(const string IrisTemplate, int & width, int & height)
 	 cvSaveImage("test1.bmp",iplImage);*/
 	return data;
 }
-string itos(unsigned char data)
+string ctos(unsigned char data)
 {
 	string str = "";
 	// 二进制表示
@@ -139,9 +139,9 @@ string ByteToStr(BYTE *data, int setlen)
 	stringstream ss;
 	for (int i = 0; i < setlen; i++)
 	{
-		s = itos(data[i]) + s;
+		s = ctos(data[i]) + s;
 	}
-	cout << s << endl;
+	//cout << s << endl;
 	return s;
 }
 
@@ -267,26 +267,75 @@ int readConfig(string filename, Config &rconfig)
 	g_print("M=%d\n", m);
 
 	gchar* digest = g_key_file_get_string(config, "IRIS", "DIGEST", NULL);
-	g_print("DIGEST=%s\n",digest);
+	g_print("DIGEST=%s\n", digest);
 
 	gint rlen = g_key_file_get_integer(config, "IRIS", "RLEN", NULL);
 	g_print("RLEN=%d\n", rlen);
 
 	gchar* r = g_key_file_get_string(config, "IRIS", "R", NULL);
-	g_print("R=%s\n",r);
+	g_print("R=%s\n", r);
 
-	rconfig.Num=num;
-	rconfig.M=m;
-	rconfig.T=t;
-	rconfig.digest_name=string(digest);
-	rconfig.rlen=rlen;
-	rconfig.r=(BYTE*)r;
-	rconfig.digest=EVP_sha1();
+	rconfig.Num = num;
+	rconfig.M = m;
+	rconfig.T = t;
+	rconfig.digest_name = string(digest);
+	rconfig.rlen = rlen;
+	rconfig.r = (BYTE*) r;
+	rconfig.digest = EVP_sha1();
 
 	g_key_file_free(config);
 	return 0;
 }
-BYTE* RecData(string setname)
+
+string itoa(int i)
 {
+	char str[25];
+	sprintf(str, "%d", i); //换成这一句吧^_^
+	//printf("integer = %d string = %s\n", i, str);
+	return string(str);
+}
+
+BYTE* StrToByte(string data,int setlen)
+{
+
+}
+BYTE* RecData(string setname, Config config)
+{
+	ifstream infile(setname.c_str());
+	if (!infile)
+	{
+		cerr << "Could not open files!" << endl;
+		return NULL;
+	}
+	string line;
+	string data;
+	int setlen = 0;
+	BYTE* rdata = NULL;
+	BYTE* temp=NULL;
+	BYTE** iriset = NULL;
+	for (int i = 1; i <= config.Num; i++)
+	{
+		infile >> line;
+		if (i == 1)
+		{
+			if (line.at(0) != '1')
+			{
+				cerr << "Read Error !" << endl;
+				return NULL;
+			}
+			setlen = (line.size() - 1) / 8;
+			int len = config.Num * setlen;
+			rdata = (BYTE*) malloc(sizeof(BYTE) * len);	//定义返回的二进制数据大小
+			memset(rdata, '\0', len);
+		}
+		data = line.substr(line.find(itoa(i)) + itoa(i).length());
+		//cout<<"i:"<<i<<"\t data:"<<data<<endl;
+		if (data.length() / 8 != setlen)
+		{
+			cerr << "Read Error !" << endl;
+			return NULL;
+		}
+
+	}
 	return NULL;
 }

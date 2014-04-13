@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
 	DifferSet("Template.ss","Test.set");
 	RecSet("differ.set","Test.set");
-
+	RecData("rec.set",config);
 
 	return 0;
 }
