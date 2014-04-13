@@ -240,7 +240,7 @@ void SetSymmetricDifference(ifstream& infile1,ifstream& infile2)
     ofstream outfile("rec.set");
     for (it=res.begin(); it!=res.end(); ++it)
     {
-        cout << '\n' << *it;
+        //cout << '\n' << *it;
         outfile << *it <<endl;
     }
 

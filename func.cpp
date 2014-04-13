@@ -295,9 +295,21 @@ string itoa(int i)
 	return string(str);
 }
 
-BYTE* StrToByte(string data,int setlen)
+BYTE* StrToByte(string data, int setlen)
 {
+	BYTE* rdata = (BYTE*) malloc(sizeof(BYTE) * setlen);
 
+	for (int i = 0; i < setlen; i++)
+	{
+		BYTE temp = (BYTE) 0;
+		for (int j = 0; j < sizeof(BYTE) * 8; j++)
+		{
+			if (data.at(i * 8 + j) == '1')
+				temp += 1 << (7 - j);
+		}
+		rdata[i] = temp;
+	}
+	return rdata;
 }
 BYTE* RecData(string setname, Config config)
 {
@@ -311,10 +323,11 @@ BYTE* RecData(string setname, Config config)
 	string data;
 	int setlen = 0;
 	BYTE* rdata = NULL;
-	BYTE* temp=NULL;
+	BYTE* temp ;
 	BYTE** iriset = NULL;
 	for (int i = 1; i <= config.Num; i++)
 	{
+		*temp=0x00;
 		infile >> line;
 		if (i == 1)
 		{
@@ -329,13 +342,16 @@ BYTE* RecData(string setname, Config config)
 			memset(rdata, '\0', len);
 		}
 		data = line.substr(line.find(itoa(i)) + itoa(i).length());
-		//cout<<"i:"<<i<<"\t data:"<<data<<endl;
 		if (data.length() / 8 != setlen)
 		{
 			cerr << "Read Error !" << endl;
 			return NULL;
 		}
+		temp = StrToByte(data, setlen);
+		//strcat((char *)rdata,(char *)temp);
+		memcpy(rdata+(i-1)*setlen,temp,setlen);
+		//cout<<"i:"<<i<<"\t data:"<<data<<endl;
 
 	}
-	return NULL;
+	return rdata;
 }

@@ -24,7 +24,9 @@ int main(int argc, char *argv[])
 
 	DifferSet("Template.ss","Test.set");
 	RecSet("differ.set","Test.set");
-	RecData("rec.set",config);
+	BYTE *rdata = RecData("rec.set",config);
+	unsigned char md[SHA_DIGEST_LENGTH];
+	unsigned char *digest = ranCode(rdata, width * height, config.r, md,config);
 
 	return 0;
 }
