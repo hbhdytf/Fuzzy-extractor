@@ -3,3 +3,5 @@ tmp/*
 *.o
 *~
 .*swp
+*.ss
+*.set

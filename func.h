@@ -50,6 +50,7 @@ typedef struct Config
 	string digest_name;
 	BYTE* r;
 	int rlen;
+	string filename;
 }Config;
 
 //虹膜特征处理阶段

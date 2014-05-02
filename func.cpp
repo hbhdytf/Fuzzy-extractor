@@ -249,7 +249,7 @@ int writeConfig(Config wconfig)
 	g_print("%s\n", content);
 	
 	//记录
-	FILE* fp = fopen("config.ini", "w");
+	FILE* fp = fopen((string(wconfig.filename+".ini")).c_str(), "w");
 	if (fp == NULL)
 		return -1;
 	fwrite((const void*) content, 1, (unsigned int) length, fp);

@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	config.digest=EVP_sha1();
 	config.digest_name=string("SHA1");
 	config.rlen=256;
+	config.filename=string(argv[1]);
 
 	const char* filename =
 			"/home/sandy/Iris/IRIS4/scores/list_result_matching_inter.txt";
@@ -31,12 +32,13 @@ int main(int argc, char *argv[])
 	cout << "irisTemplate:--" << irisTemplate << endl;
 
 	int width, height;
-	irisTemplate = "02_03.bmp";
+	//irisTemplate = "02_03.bmp";
+	irisTemplate = string(argv[1]);
 	//获取虹膜数据
 	BYTE *data = getIrisCode(iriscodeds + irisTemplate, width, height);
 	cout << width << " " << height << endl;
 	BYTE** iriset = NULL;
-	parsIris(data, iriset, width * height, config, "Template.set");
+	parsIris(data, iriset, width * height, config, irisTemplate+".set");
 
 	BYTE* r = NULL;
 	genR(&r,config.rlen);
@@ -47,7 +49,7 @@ int main(int argc, char *argv[])
 
 	//启动进程sketch生成模板popen读入程序返回的值
 	FILE *fp;
-	fp = popen("./pinsketch/sketch Template.set", "r");
+	fp = popen(string("./pinsketch/sketch "+irisTemplate+".set").c_str(), "r");
 	pclose(fp);
 
 	//记录配置文件，恢复时需要
