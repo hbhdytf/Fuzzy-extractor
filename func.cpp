@@ -7,7 +7,8 @@
 
 #include<iostream>
 #include"func.h"
-
+#include <cstring>
+#include <glib-2.0/glib/gkeyfile.h>
 using namespace std;
 
 #ifndef RLEN
@@ -27,6 +28,23 @@ void string_replace(string&s1, const string&s2, const string&s3)
 	}
 }
 
+//将string 类型和根据setlen恢复BYTE* ，其实setlen 可以根据data.length()计算
+BYTE* StrToByte(string data, int setlen)
+{
+	BYTE* rdata = (BYTE*) malloc(sizeof(BYTE) * setlen);
+
+	for (int i = 0; i < setlen; i++)
+	{
+		BYTE temp = (BYTE) 0;
+		for (int j = 0; j < sizeof(BYTE) * 8; j++)
+		{
+			if (data.at(i * 8 + j) == '1')
+				temp += 1 << (7 - j);
+		}
+		rdata[i] = temp;
+	}
+	return rdata;
+}
 string chooseIris(const char* ResulTxt)
 {
 	ifstream infile(ResulTxt);
@@ -110,7 +128,43 @@ getIrisCode(const string IrisTemplate, int & width, int & height)
 	 cvSaveImage("test1.bmp",iplImage);*/
 	return data;
 }
+void printbin(BYTE *b,int l)
+{
+	char buf[1024];
+	static const char hex[] = "0123456789ABCDEF";
+	int i;
+	for (i = 0; i < l; i++)
+	{
+		buf[i * 2] = hex[b[i] >> 4];
+		buf[i * 2 + 1] = hex[b[i] & 0xf];
+	}
+	buf[l * 2] = 0;
+	cout<<"Print bin:\t"<<buf<<endl;
+}
+void binstr2bin(BYTE *buf, string line, int len)
+{
+	BYTE *data=StrToByte(line,len/8);
+	printbin(data,len/8);
+	strcpy((char*)buf,(const char*)data);
+}
+BYTE *getFingerCode(const string filename)
+{
+	ifstream infile(filename.c_str());
+	if (!infile)
+	{
+		cout << "Can't open file:" << filename << endl;
+		exit(-1);
+	}
+	string line;
+	infile >> line;
+	BYTE *buf = (BYTE *)malloc(sizeof(BYTE)*line.length());
+	memset(buf,'\0',line.length());
+	BYTE *data= (BYTE *)line.c_str();
+	memcpy(buf,data,line.length());
 
+	//binstr2bin(buf, line, line.length());
+	return buf;
+}
 //将char字符转为string类型
 string ctos(unsigned char data)
 {
@@ -247,9 +301,9 @@ int writeConfig(Config wconfig)
 	g_key_file_set_string(config, "IRIS", "R", ran);
 	gchar* content = (gchar *) g_key_file_to_data(config, &length, NULL);
 	g_print("%s\n", content);
-	
+
 	//记录
-	FILE* fp = fopen((string(wconfig.filename+".ini")).c_str(), "w");
+	FILE* fp = fopen((string(wconfig.filename + ".ini")).c_str(), "w");
 	if (fp == NULL)
 		return -1;
 	fwrite((const void*) content, 1, (unsigned int) length, fp);
@@ -304,23 +358,6 @@ string itoa(int i)
 	return string(str);
 }
 
-//将string 类型和根据setlen恢复BYTE* ，其实setlen 可以根据data.length()计算
-BYTE* StrToByte(string data, int setlen)
-{
-	BYTE* rdata = (BYTE*) malloc(sizeof(BYTE) * setlen);
-
-	for (int i = 0; i < setlen; i++)
-	{
-		BYTE temp = (BYTE) 0;
-		for (int j = 0; j < sizeof(BYTE) * 8; j++)
-		{
-			if (data.at(i * 8 + j) == '1')
-				temp += 1 << (7 - j);
-		}
-		rdata[i] = temp;
-	}
-	return rdata;
-}
 BYTE* RecData(string setname, Config config)
 {
 	ifstream infile(setname.c_str());
@@ -333,11 +370,11 @@ BYTE* RecData(string setname, Config config)
 	string data;
 	int setlen = 0;
 	BYTE* rdata = NULL;
-	BYTE* temp ;
+	BYTE* temp;
 	BYTE** iriset = NULL;
 	for (int i = 1; i <= config.Num; i++)
 	{
-		*temp=0x00;
+		*temp = 0x00;
 		infile >> line;
 		if (i == 1)
 		{
@@ -347,8 +384,8 @@ BYTE* RecData(string setname, Config config)
 				return NULL;
 			}
 			setlen = (line.size() - 1) / 8;
-			int len = config.Num * setlen;
-			rdata = (BYTE*) malloc(sizeof(BYTE) * len);	//定义返回的二进制数据大小
+			int len = config.Num * setlen+1;
+			rdata = (BYTE*) malloc(sizeof(BYTE) * len); //定义返回的二进制数据大小
 			memset(rdata, '\0', len);
 		}
 		data = line.substr(line.find(itoa(i)) + itoa(i).length());
@@ -360,7 +397,7 @@ BYTE* RecData(string setname, Config config)
 		temp = StrToByte(data, setlen);
 		//strcat((char *)rdata,(char *)temp);
 		//Eclipse在此处数组显示有问题
-		memcpy(rdata+(i-1)*setlen,temp,setlen);
+		memcpy(rdata + (i - 1) * setlen, temp, setlen);
 		//cout<<"i:"<<i<<"\t data:"<<data<<endl;
 
 	}

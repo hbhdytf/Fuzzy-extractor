@@ -74,4 +74,8 @@ int readConfig(string filename, Config &rconfig);
 
 //恢复数据
 BYTE* RecData(string setname,Config config);
+
+//指纹
+BYTE *getFingerCode(const string filename);
+
 #endif

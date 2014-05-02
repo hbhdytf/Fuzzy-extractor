@@ -6,7 +6,7 @@ CXXFLAGS = -g
 #gtk+-2.0-->>在操作配置文件时使用到
 LDFLAGS_CXX =`pkg-config opencv openssl gtk+-2.0 --cflags --libs`
 SUBDIRS=pinsketch
-BIN=genSS recSS
+BIN=genSS recSS genfinSS recfinSS
 #指定动态库的链接路径和执行搜索路径为/pinsketch ，NTL为运算库 
 SOFLAGS_CXX = -L./pinsketch -lpinsketch -lntl -Wl,-rpath,./pinsketch/
 
@@ -36,6 +36,10 @@ all: $(SUBDIRS) $(BIN)  del
 genSS:func.o genSS.o 
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS_CXX) 
 recSS:func.o recSS.o 
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS_CXX) $(SOFLAGS_CXX)
+genfinSS:func.o genfinSS.o
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS_CXX)
+recfinSS:func.o recfinSS.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS_CXX) $(SOFLAGS_CXX)
 $(SUBDIRS):
 	$(MAKE) -C $@ all
