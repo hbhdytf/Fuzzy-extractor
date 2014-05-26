@@ -17,28 +17,29 @@ int main(int argc, char *argv[])
 
 	//写入配置参数
 	config.M=SETM;
-	config.T=SETT;
+	config.T=2060;
 	config.Num=SETNum;
 	config.digest=EVP_sha1();
 	config.digest_name=string("SHA1");
 	config.rlen=256;
-	config.filename=string(argv[1]);
+	config.filename=string(argv[2]);
 
 	const char* filename =
 			"/home/sandy/Iris/IRIS4/scores/list_result_matching_inter.txt";
-	string iriscodeds = "/home/sandy/USIT/";
+	string iriscodeds = string(argv[1]);
 	//const char* filename="/home/sandy/list_result_matching_inter.txt";
 	string irisTemplate = chooseIris(filename);
 	cout << "irisTemplate:--" << irisTemplate << endl;
 
 	int width, height;
 	//irisTemplate = "02_03.bmp";
-	irisTemplate = string(argv[1]);
+	irisTemplate = string(argv[2]);
+	config.filename=iriscodeds + irisTemplate;
 	//获取虹膜数据
 	BYTE *data = getIrisCode(iriscodeds + irisTemplate, width, height);
 	cout << width << " " << height << endl;
 	BYTE** iriset = NULL;
-	parsIris(data, iriset, width * height, config, irisTemplate+".set");
+	parsIris(data, iriset, width * height, config, iriscodeds + irisTemplate+".set");
 
 	BYTE* r = NULL;
 	genR(&r,config.rlen);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
 
 	//启动进程sketch生成模板popen读入程序返回的值
 	FILE *fp;
-	fp = popen(string("./pinsketch/sketch "+irisTemplate+".set").c_str(), "r");
+	fp = popen(string("./pinsketch/sketch "+iriscodeds + irisTemplate+".set").c_str(), "r");
 	pclose(fp);
 
 	//记录配置文件，恢复时需要

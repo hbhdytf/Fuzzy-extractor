@@ -30,7 +30,7 @@ int DifferSet(string sketch, string testSet)
 	const char *differ = "differ.set";
 	ifstream infile1(sketch.c_str());
 	ifstream infile2(testSet.c_str());
-	ofstream outfile(differ);
+
 	if (!infile1 || !infile2)
 	{
 		cerr << "Could not open files!" << endl;
@@ -74,12 +74,23 @@ int DifferSet(string sketch, string testSet)
 	success = BCHSyndromeDecode(setDifference, ss, d);
 	if (success == false)
 	{
+		exit(-1);
 		cerr << "Set difference too large, greater than " << (d - 1) / 2
 				<< " elements.\n"
 				<< "Unable to compute from the given sketches.\n";
 		return -1;
 	}
-
+	string str1=sketch;
+	string str2=testSet;
+	str1.erase(str1.end()-7,str1.end());
+	str2.erase(str2.end()-8,str2.end());
+	str1=sketch.substr(sketch.length()-10,3);
+	str2=testSet.substr(testSet.length()-11,3);
+	string ds=sketch.substr(0,sketch.length()-10);
+	//string sdf=iriscodeds.substr((iriscodeds.length()-4),3)+"-"+str1+"-"+str2+"-differ.set";
+	string sdf=ds+str1+"-"+str2+"-differ.set";
+	cout<<"sdf:"<<sdf<<"\n"<<sketch+testSet<<endl;
+	ofstream outfile(sdf.c_str());
 	OutputSetDifference(outfile, setDifference);
 	cout << "--end differ--" << endl;
 	return 0;

@@ -14,6 +14,7 @@
 
 using namespace std; // may be needed to compile on some platforms; may need to be removed on others
 NTL_CLIENT
+extern string iriscodeds;
 
 /************************ I/O ************************************/
 void ReadSetParams(long &m, long &d, istream &infile);

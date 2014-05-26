@@ -8,7 +8,7 @@ LDFLAGS_CXX =`pkg-config opencv openssl gtk+-2.0 --cflags --libs`
 SUBDIRS=pinsketch
 BIN=genSS recSS genfinSS recfinSS
 #指定动态库的链接路径和执行搜索路径为/pinsketch ，NTL为运算库 
-SOFLAGS_CXX = -L./pinsketch -lpinsketch -lntl -Wl,-rpath,./pinsketch/
+SOFLAGS_CXX = -L/home/sandy/Fuzzy/pinsketch/ -lpinsketch -lntl -Wl,-rpath,/home/sandy/Fuzzy/pinsketch/
 
 #显式指定clean为伪目标，防止在当前目录下存在clean文件是无法执行清理工作
 .PHONY:default all clean $(SUBDIRS) del
